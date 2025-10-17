@@ -1,5 +1,22 @@
 # Take home assignment
 
+## Implemented Task:
+
+Requirements:
+
+- JWT authentication middleware (Completed)
+- Proper validation (e.g., Joi, Yup, Zod) (Completed)
+- Error handling (e.g., 400/401/500 responses) (Completed)
+- Use .env for sensitive data (DB credentials, JWT secret) (Completed)
+- Database migrations or schema setup script (Completed)
+
+For extra credit:
+
+- Implement a search API (with pagination and filtering). (Not completed)
+- Add image upload (e.g., Cloudinary or local storage). (Completed)
+- Add Dockerfile for both frontend and backend. (Completed)
+- Implement incremental static regeneration (ISR) for Next.js. (Completed)
+
 ## Auto Parts Inventory & Ordering System
 
 ### Goal
