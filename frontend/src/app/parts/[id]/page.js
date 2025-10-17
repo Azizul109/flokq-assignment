@@ -1,28 +1,28 @@
 // src/app/parts/[id]/page.js
-import api from "@/lib/api";
-import { notFound } from "next/navigation";
-import Link from "next/link";
+import api from '@/lib/api';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
 
 async function getPart(id) {
   try {
     const response = await api.get(`/parts/${id}`);
     return response.data.data || null;
   } catch (error) {
-    console.error("Error fetching part:", error);
+    console.error('Error fetching part:', error);
     return null;
   }
 }
 
 export async function generateStaticParams() {
   try {
-    const response = await api.get("/parts");
+    const response = await api.get('/parts');
     const parts = response.data.data || [];
-
+    
     return parts.map((part) => ({
       id: part.id.toString(),
     }));
   } catch (error) {
-    console.error("Error generating static params:", error);
+    console.error('Error generating static params:', error);
     return [];
   }
 }
@@ -34,123 +34,184 @@ export default async function PartDetail({ params }) {
     notFound();
   }
 
+  const getCategoryBadge = (category) => {
+    const colors = {
+      filters: 'bg-info',
+      brakes: 'bg-danger',
+      ignition: 'bg-warning',
+      electrical: 'bg-primary',
+      engine: 'bg-success',
+      suspension: 'bg-secondary',
+      cooling: 'bg-info',
+      transmission: 'bg-dark',
+      accessories: 'bg-secondary',
+    };
+    return colors[category] || 'bg-secondary';
+  };
+
+  const getStockStatus = (stock) => {
+    if (stock === 0) {
+      return { text: 'Out of Stock', class: 'text-danger', badge: 'bg-danger' };
+    } else if (stock < 10) {
+      return { text: 'Low Stock', class: 'text-warning', badge: 'bg-warning text-dark' };
+    } else {
+      return { text: 'In Stock', class: 'text-success', badge: 'bg-success' };
+    }
+  };
+
+  const stockStatus = getStockStatus(part.stock);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link
-              href="/"
-              className="text-2xl font-bold text-gray-900 hover:text-blue-600"
-            >
-              🚗 AutoParts
+    <>
+      {/* Navigation */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div className="container">
+          <Link className="navbar-brand d-flex align-items-center" href="/">
+            <i className="fas fa-car me-2 text-primary"></i>
+            <span className="fw-bold">AutoParts</span>
+            <span className="text-primary fw-bold">Pro</span>
+          </Link>
+          
+          <div className="navbar-nav ms-auto">
+            <Link href="/" className="nav-link">
+              <i className="fas fa-arrow-left me-1"></i>
+              Back to Home
             </Link>
-            <nav className="flex space-x-8">
-              <Link
-                href="/"
-                className="text-gray-700 hover:text-blue-600 font-medium"
-              >
-                ← Back to Home
-              </Link>
-            </nav>
           </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Part Details */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Part Image Placeholder */}
-              <div className="bg-gray-100 rounded-lg h-80 flex items-center justify-center">
-                <div className="text-center text-gray-400">
-                  <div className="text-6xl mb-4">🚗</div>
-                  <p>Part Image</p>
-                </div>
-              </div>
+      <div className="container py-5">
+        <div className="row justify-content-center">
+          <div className="col-lg-10">
+            <div className="card shadow-sm border-0">
+              <div className="card-body p-4 p-md-5">
+                {/* Breadcrumb */}
+                <nav aria-label="breadcrumb" className="mb-4">
+                  <ol className="breadcrumb">
+                    <li className="breadcrumb-item">
+                      <Link href="/" className="text-decoration-none">
+                        <i className="fas fa-home me-1"></i>
+                        Home
+                      </Link>
+                    </li>
+                    <li className="breadcrumb-item">
+                      <Link href="/parts" className="text-decoration-none">
+                        Parts
+                      </Link>
+                    </li>
+                    <li className="breadcrumb-item active">{part.name}</li>
+                  </ol>
+                </nav>
 
-              {/* Part Details */}
-              <div>
-                <div className="mb-6">
-                  <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full capitalize">
-                    {part.category}
-                  </span>
-                </div>
-
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {part.name}
-                </h1>
-                <p className="text-xl text-gray-600 mb-6">{part.brand}</p>
-
-                <div className="mb-6">
-                  <p className="text-4xl font-bold text-blue-600">
-                    ${part.price}
-                  </p>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center">
-                    <span className="font-semibold text-gray-700 w-24">
-                      Stock:
-                    </span>
-                    <span
-                      className={`font-medium ${
-                        part.stock > 0 ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {part.stock > 0
-                        ? `${part.stock} units available`
-                        : "Out of stock"}
-                    </span>
+                <div className="row">
+                  {/* Part Image */}
+                  <div className="col-md-6 mb-4 mb-md-0">
+                    <div className="bg-light rounded-3 d-flex align-items-center justify-content-center" style={{height: '400px'}}>
+                      {part.image_url ? (
+                        <img 
+                          src={part.image_url} 
+                          alt={part.name}
+                          className="img-fluid rounded-3"
+                          style={{maxHeight: '100%', maxWidth: '100%', objectFit: 'cover'}}
+                        />
+                      ) : (
+                        <div className="text-center text-muted">
+                          <i className="fas fa-image fa-5x mb-3"></i>
+                          <p>No Image Available</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center">
-                    <span className="font-semibold text-gray-700 w-24">
-                      Category:
-                    </span>
-                    <span className="text-gray-600 capitalize">
-                      {part.category}
-                    </span>
-                  </div>
+                  {/* Part Details */}
+                  <div className="col-md-6">
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <span className={`badge ${getCategoryBadge(part.category)} text-uppercase fs-6`}>
+                        {part.category}
+                      </span>
+                      <span className={`badge ${stockStatus.badge} fs-6`}>
+                        {stockStatus.text}
+                      </span>
+                    </div>
 
-                  <div className="flex items-center">
-                    <span className="font-semibold text-gray-700 w-24">
-                      Brand:
-                    </span>
-                    <span className="text-gray-600">{part.brand}</span>
-                  </div>
-                </div>
-
-                {part.description && (
-                  <div className="mb-8">
-                    <h3 className="font-semibold text-gray-700 mb-2">
-                      Description
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {part.description}
+                    <h1 className="display-5 fw-bold text-dark mb-3">{part.name}</h1>
+                    <p className="lead text-muted mb-4">
+                      <i className="fas fa-industry me-2"></i>
+                      {part.brand}
                     </p>
-                  </div>
-                )}
 
-                <div className="flex space-x-4">
-                  <button
-                    disabled={part.stock === 0}
-                    className={`flex-1 py-3 px-6 rounded-lg font-medium text-center ${
-                      part.stock > 0
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {part.stock > 0 ? "Add to Cart" : "Out of Stock"}
-                  </button>
+                    <div className="mb-4">
+                      <h2 className="text-primary fw-bold display-4 mb-2">${part.price}</h2>
+                      <p className="text-muted">per unit</p>
+                    </div>
+
+                    <div className="mb-4">
+                      <h5 className="fw-bold mb-3">
+                        <i className="fas fa-info-circle me-2 text-primary"></i>
+                        Product Details
+                      </h5>
+                      <div className="row g-3">
+                        <div className="col-6">
+                          <div className="d-flex align-items-center">
+                            <i className="fas fa-boxes me-2 text-muted"></i>
+                            <div>
+                              <small className="text-muted d-block">Stock</small>
+                              <strong className={stockStatus.class}>{part.stock} units</strong>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="d-flex align-items-center">
+                            <i className="fas fa-tags me-2 text-muted"></i>
+                            <div>
+                              <small className="text-muted d-block">Category</small>
+                              <strong className="text-capitalize">{part.category}</strong>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="d-flex align-items-center">
+                            <i className="fas fa-industry me-2 text-muted"></i>
+                            <div>
+                              <small className="text-muted d-block">Brand</small>
+                              <strong>{part.brand}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {part.description && (
+                      <div className="mb-4">
+                        <h5 className="fw-bold mb-3">
+                          <i className="fas fa-align-left me-2 text-primary"></i>
+                          Description
+                        </h5>
+                        <p className="text-muted lead">{part.description}</p>
+                      </div>
+                    )}
+
+                    <div className="d-grid gap-2 d-md-flex">
+                      <button 
+                        className={`btn btn-primary btn-lg flex-fill ${part.stock === 0 ? 'disabled' : ''}`}
+                        disabled={part.stock === 0}
+                      >
+                        <i className="fas fa-cart-plus me-2"></i>
+                        {part.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                      </button>
+                      <button className="btn btn-outline-secondary btn-lg">
+                        <i className="fas fa-heart me-2"></i>
+                        Wishlist
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

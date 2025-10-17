@@ -67,69 +67,105 @@ export default function Dashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="spinner-border text-primary mb-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="text-muted">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 text-sm">Welcome back, {user?.name}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={logout}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-medium"
-              >
-                Logout
-              </button>
+    <>
+      {/* Navigation */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container">
+          <a className="navbar-brand d-flex align-items-center" href="/">
+            <i className="fas fa-car me-2"></i>
+            <span className="fw-bold">AutoParts</span>
+            <span className="text-warning fw-bold">Pro</span>
+          </a>
+          
+          <div className="navbar-nav ms-auto">
+            <div className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                <i className="fas fa-user-circle me-2"></i>
+                {user?.name}
+              </a>
+              <ul className="dropdown-menu">
+                <li><a className="dropdown-item" href="#"><i className="fas fa-user me-2"></i>Profile</a></li>
+                <li><hr className="dropdown-divider" /></li>
+                <li>
+                  <button className="dropdown-item text-danger" onClick={logout}>
+                    <i className="fas fa-sign-out-alt me-2"></i>Logout
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats */}
-        <DashboardStats parts={parts} />
+      <div className="container-fluid py-4">
+        <div className="row">
+          <div className="col-12">
+            {/* Page Header */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 className="h2 fw-bold text-dark mb-1">
+                  <i className="fas fa-tachometer-alt me-2 text-primary"></i>
+                  Dashboard
+                </h1>
+                <p className="text-muted mb-0">Welcome back, {user?.name}</p>
+              </div>
+              <button
+                onClick={() => setShowForm(true)}
+                className="btn btn-primary"
+              >
+                <i className="fas fa-plus me-2"></i>
+                Add New Part
+              </button>
+            </div>
 
-        {/* Actions */}
-        <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Parts Inventory</h2>
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
-          >
-            Add New Part
-          </button>
+            {/* Stats Cards */}
+            <DashboardStats parts={parts} />
+
+            {/* Add/Edit Form */}
+            {showForm && (
+              <div className="row mb-4">
+                <div className="col-12">
+                  <PartForm
+                    part={editingPart}
+                    onSubmit={handleFormSubmit}
+                    onCancel={handleFormCancel}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Parts Table */}
+            <div className="card shadow-sm">
+              <div className="card-header bg-white">
+                <h5 className="card-title mb-0">
+                  <i className="fas fa-list me-2 text-primary"></i>
+                  Parts Inventory
+                </h5>
+              </div>
+              <div className="card-body">
+                <PartsTable
+                  parts={parts}
+                  loading={loading}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Add/Edit Form */}
-        {showForm && (
-          <PartForm
-            part={editingPart}
-            onSubmit={handleFormSubmit}
-            onCancel={handleFormCancel}
-          />
-        )}
-
-        {/* Parts Table */}
-        <PartsTable
-          parts={parts}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

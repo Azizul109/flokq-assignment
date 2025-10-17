@@ -46,6 +46,7 @@ export default function Register() {
     }
 
     try {
+      // Remove confirmPassword before sending to API
       const { confirmPassword, ...registerData } = formData;
       const response = await api.post('/auth/register', registerData);
       const { token, user } = response.data;
@@ -60,118 +61,143 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center">
-          <h1 className="text-3xl font-bold text-gray-900">🚗 AutoParts</h1>
-        </Link>
-        <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
-          Create your account
-        </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name
-              </label>
-              <div className="mt-1">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your password"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Confirm your password"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Creating account...' : 'Create account'}
-              </button>
-            </div>
-
-            <div className="text-center">
-              <span className="text-gray-600">Already have an account? </span>
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign in
+    <div className="min-vh-100 bg-light d-flex align-items-center">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-6 col-lg-5">
+            {/* Header */}
+            <div className="text-center mb-5">
+              <Link href="/" className="text-decoration-none">
+                <div className="d-flex align-items-center justify-content-center mb-3">
+                  <i className="fas fa-car fa-2x text-primary me-2"></i>
+                  <span className="fw-bold fs-3">AutoParts Pro</span>
+                </div>
               </Link>
+              <h2 className="fw-bold text-dark">Create Your Account</h2>
+              <p className="text-muted">Join AutoParts Pro today</p>
             </div>
-          </form>
+
+            {/* Registration Form */}
+            <div className="card shadow-sm border-0">
+              <div className="card-body p-4 p-md-5">
+                {error && (
+                  <div className="alert alert-danger d-flex align-items-center" role="alert">
+                    <i className="fas fa-exclamation-triangle me-2"></i>
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label fw-semibold">
+                      <i className="fas fa-user me-2 text-primary"></i>
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control form-control-lg"
+                      id="name"
+                      name="name"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label fw-semibold">
+                      <i className="fas fa-envelope me-2 text-primary"></i>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control form-control-lg"
+                      id="email"
+                      name="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="password" className="form-label fw-semibold">
+                      <i className="fas fa-lock me-2 text-primary"></i>
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control form-control-lg"
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="confirmPassword" className="form-label fw-semibold">
+                      <i className="fas fa-lock me-2 text-primary"></i>
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control form-control-lg"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="terms"
+                        required
+                      />
+                      <label className="form-check-label text-muted" htmlFor="terms">
+                        I agree to the <a href="#" className="text-primary">Terms and Conditions</a>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-lg w-100 py-3 fw-bold"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Creating account...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-user-plus me-2"></i>
+                        Create Account
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="text-center mt-4">
+                  <span className="text-muted">Already have an account? </span>
+                  <Link href="/login" className="text-decoration-none fw-semibold text-primary">
+                    Sign in here
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
