@@ -1,32 +1,32 @@
 // src/components/PartForm.js
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import api from '@/lib/api';
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
 
 export default function PartForm({ part, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
-    name: '',
-    brand: '',
-    price: '',
-    stock: '',
-    category: '',
-    description: '',
+    name: "",
+    brand: "",
+    price: "",
+    stock: "",
+    category: "",
+    description: "",
   });
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (part) {
       setFormData({
-        name: part.name || '',
-        brand: part.brand || '',
-        price: part.price || '',
-        stock: part.stock || '',
-        category: part.category || '',
-        description: part.description || '',
+        name: part.name || "",
+        brand: part.brand || "",
+        price: part.price || "",
+        stock: part.stock || "",
+        category: part.category || "",
+        description: part.description || "",
       });
       if (part.image_url) {
         setImagePreview(part.image_url);
@@ -37,7 +37,7 @@ export default function PartForm({ part, onSubmit, onCancel }) {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -45,7 +45,7 @@ export default function PartForm({ part, onSubmit, onCancel }) {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -58,42 +58,42 @@ export default function PartForm({ part, onSubmit, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const submitData = new FormData();
-      
+
       // Append form data
-      submitData.append('name', formData.name);
-      submitData.append('brand', formData.brand);
-      submitData.append('price', formData.price);
-      submitData.append('stock', formData.stock);
-      submitData.append('category', formData.category);
-      submitData.append('description', formData.description);
-      
+      submitData.append("name", formData.name);
+      submitData.append("brand", formData.brand);
+      submitData.append("price", formData.price);
+      submitData.append("stock", formData.stock);
+      submitData.append("category", formData.category);
+      submitData.append("description", formData.description);
+
       // Append image if selected
       if (imageFile) {
-        submitData.append('image', imageFile);
+        submitData.append("image", imageFile);
       }
 
       let response;
       if (part) {
         response = await api.put(`/parts/${part.id}`, submitData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
       } else {
-        response = await api.post('/parts', submitData, {
+        response = await api.post("/parts", submitData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
       }
 
       onSubmit();
     } catch (error) {
-      setError(error.response?.data?.error || 'Failed to save part');
+      setError(error.response?.data?.error || "Failed to save part");
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ export default function PartForm({ part, onSubmit, onCancel }) {
 
   const removeImage = () => {
     setImageFile(null);
-    setImagePreview('');
+    setImagePreview("");
   };
 
   return (
@@ -109,12 +109,15 @@ export default function PartForm({ part, onSubmit, onCancel }) {
       <div className="card-header bg-white">
         <h5 className="card-title mb-0">
           <i className="fas fa-edit me-2 text-primary"></i>
-          {part ? 'Edit Part' : 'Add New Part'}
+          {part ? "Edit Part" : "Add New Part"}
         </h5>
       </div>
       <div className="card-body">
         {error && (
-          <div className="alert alert-danger d-flex align-items-center" role="alert">
+          <div
+            className="alert alert-danger d-flex align-items-center"
+            role="alert"
+          >
             <i className="fas fa-exclamation-triangle me-2"></i>
             {error}
           </div>
@@ -128,16 +131,20 @@ export default function PartForm({ part, onSubmit, onCancel }) {
                 <i className="fas fa-image me-2 text-primary"></i>
                 Part Image
               </label>
-              
+
               {/* Image Preview */}
               {imagePreview && (
                 <div className="mb-3">
                   <div className="position-relative d-inline-block">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
                       className="img-thumbnail"
-                      style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
+                      style={{
+                        maxWidth: "200px",
+                        maxHeight: "200px",
+                        objectFit: "cover",
+                      }}
                     />
                     <button
                       type="button"
@@ -283,13 +290,16 @@ export default function PartForm({ part, onSubmit, onCancel }) {
                 >
                   {loading ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      ></span>
                       Saving...
                     </>
                   ) : (
                     <>
                       <i className="fas fa-save me-2"></i>
-                      {part ? 'Update Part' : 'Add Part'}
+                      {part ? "Update Part" : "Add Part"}
                     </>
                   )}
                 </button>
