@@ -12,8 +12,9 @@ export default function PartForm({ part, onSubmit, onCancel }) {
     stock: '',
     category: '',
     description: '',
-    image_url: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -26,8 +27,10 @@ export default function PartForm({ part, onSubmit, onCancel }) {
         stock: part.stock || '',
         category: part.category || '',
         description: part.description || '',
-        image_url: part.image_url || ''
       });
+      if (part.image_url) {
+        setImagePreview(part.image_url);
+      }
     }
   }, [part]);
 
@@ -38,22 +41,54 @@ export default function PartForm({ part, onSubmit, onCancel }) {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const data = {
-        ...formData,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock)
-      };
+      const submitData = new FormData();
+      
+      // Append form data
+      submitData.append('name', formData.name);
+      submitData.append('brand', formData.brand);
+      submitData.append('price', formData.price);
+      submitData.append('stock', formData.stock);
+      submitData.append('category', formData.category);
+      submitData.append('description', formData.description);
+      
+      // Append image if selected
+      if (imageFile) {
+        submitData.append('image', imageFile);
+      }
 
+      let response;
       if (part) {
-        await api.put(`/parts/${part.id}`, data);
+        response = await api.put(`/parts/${part.id}`, submitData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       } else {
-        await api.post('/parts', data);
+        response = await api.post('/parts', submitData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       }
 
       onSubmit();
@@ -62,6 +97,11 @@ export default function PartForm({ part, onSubmit, onCancel }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
   };
 
   return (
@@ -82,6 +122,46 @@ export default function PartForm({ part, onSubmit, onCancel }) {
 
         <form onSubmit={handleSubmit}>
           <div className="row g-3">
+            {/* Image Upload Section */}
+            <div className="col-12">
+              <label className="form-label fw-semibold">
+                <i className="fas fa-image me-2 text-primary"></i>
+                Part Image
+              </label>
+              
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mb-3">
+                  <div className="position-relative d-inline-block">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="img-thumbnail"
+                      style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm position-absolute top-0 end-0"
+                      onClick={removeImage}
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* File Input */}
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <div className="form-text">
+                Upload a product image (JPG, PNG, GIF). Max size: 5MB.
+              </div>
+            </div>
+
             <div className="col-md-6">
               <label htmlFor="name" className="form-label fw-semibold">
                 <i className="fas fa-tag me-2 text-primary"></i>
@@ -176,22 +256,6 @@ export default function PartForm({ part, onSubmit, onCancel }) {
                 <option value="transmission">Transmission</option>
                 <option value="accessories">Accessories</option>
               </select>
-            </div>
-
-            <div className="col-md-6">
-              <label htmlFor="image_url" className="form-label fw-semibold">
-                <i className="fas fa-image me-2 text-primary"></i>
-                Image URL
-              </label>
-              <input
-                type="url"
-                className="form-control"
-                id="image_url"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-              />
             </div>
 
             <div className="col-12">

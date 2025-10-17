@@ -18,9 +18,9 @@ export default function PartCard({ part }) {
   };
 
   const getStockBadge = (stock) => {
-    if (stock === 0) return 'bg-danger';
-    if (stock < 10) return 'bg-warning text-dark';
-    return 'bg-success';
+    if (stock === 0) return 'badge bg-danger';
+    if (stock < 10) return 'badge bg-warning text-dark';
+    return 'badge bg-success';
   };
 
   const getStockText = (stock) => {
@@ -31,6 +31,23 @@ export default function PartCard({ part }) {
 
   return (
     <div className="part-card card h-100">
+      {/* Part Image */}
+      {part.image_url ? (
+        <img 
+          src={part.image_url} 
+          alt={part.name}
+          className="card-img-top"
+          style={{ height: '200px', objectFit: 'cover' }}
+        />
+      ) : (
+        <div 
+          className="card-img-top bg-light d-flex align-items-center justify-content-center"
+          style={{ height: '200px' }}
+        >
+          <i className="fas fa-image fa-3x text-muted"></i>
+        </div>
+      )}
+      
       <div className="card-body d-flex flex-column">
         {/* Category and Stock Badges */}
         <div className="d-flex justify-content-between align-items-start mb-3">
