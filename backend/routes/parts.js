@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 
     const parts = await Part.findAll({
       where: whereClause,
-      order: [['created_at', 'DESC']],
+      order: [['createdAt', 'DESC']],
     });
 
     res.json({
