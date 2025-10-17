@@ -1,8 +1,10 @@
 # Take home assignment
 
+## Auto Parts Inventory & Ordering System
+
 ## Implemented Task:
 
-Requirements:
+# Requirements:
 
 - JWT authentication middleware (Completed)
 - Proper validation (e.g., Joi, Yup, Zod) (Completed)
@@ -10,14 +12,12 @@ Requirements:
 - Use .env for sensitive data (DB credentials, JWT secret) (Completed)
 - Database migrations or schema setup script (Completed)
 
-For extra credit:
+# For extra credit:
 
 - Implement a search API (with pagination and filtering). (Not completed)
 - Add image upload (e.g., Cloudinary or local storage). (Completed)
 - Add Dockerfile for both frontend and backend. (Completed)
 - Implement incremental static regeneration (ISR) for Next.js. (Completed)
-
-## Auto Parts Inventory & Ordering System
 
 ### Goal
 
