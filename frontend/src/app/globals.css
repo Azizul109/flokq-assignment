@@ -1,5 +1,5 @@
 /* src/app/globals.css */
-@import 'bootstrap/dist/css/bootstrap.min.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
 
 /* Custom styles */
 :root {
@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
 }
 
@@ -38,19 +38,19 @@ body {
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .part-card {
   transition: transform 0.2s ease;
   border: none;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .part-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
 .category-badge {
@@ -89,17 +89,31 @@ body {
   color: white;
 }
 
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Smooth scrolling for category navigation */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-section {
     padding: 60px 0;
     text-align: center;
   }
-  
+
   .hero-section h1 {
     font-size: 2rem;
   }
-  
+
   .feature-card {
     margin-bottom: 1.5rem;
   }
