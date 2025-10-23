@@ -28,7 +28,8 @@ export async function generateStaticParams() {
 }
 
 export default async function PartDetail({ params }) {
-  const part = await getPart(params.id);
+  const { id } = await params;
+  const part = await getPart(id);
 
   if (!part) {
     notFound();
